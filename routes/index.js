@@ -8,9 +8,9 @@ mongoose.connect(dbconnet, {useNewUrlParser: true, useUnifiedTopology: true});
 
 var multer = require('multer');
 
-// var upload = multer({
-//    dest: '/public/uploads'
-// })
+var upload = multer({
+   dest: '/public/uploads'
+})
 
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error: '));
@@ -35,7 +35,7 @@ router.get('/', function (req, res, next) {
 });
 
 
-router.post('/users', function (req, res, next) {
+router.post('/users',upload.single('images'), function (req, res, next) {
     var userConnect = db.model('Daty', User);
     userConnect({
         name: req.body.name,

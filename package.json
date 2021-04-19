@@ -1,21 +1,18 @@
 {
   "name": "daty",
-  "version": "1.0.0",
-  "description": "Truong Quang Long",
+  "version": "0.0.0",
+  "private": true,
   "scripts": {
     "start": "node ./bin/www "
   },
-  "author": "Quang Long",
-  "license": "ISC",
+
   "dependencies": {
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
     "express": "~4.16.1",
-    "express-handlebars": "^5.3.0",
-    "handlebars": "^4.7.6",
     "hbs": "^4.1.1",
     "http-errors": "~1.6.3",
-    "mongoose": "^5.12.5",
+    "mongoose": "^5.12.4",
     "morgan": "~1.9.1",
     "multer": "^1.4.2"
   }
