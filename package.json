@@ -1,10 +1,12 @@
 {
   "name": "daty",
-  "version": "0.0.0",
-  "private": true,
+  "version": "1.0.0",
+  "description": "Truong Quang Long",
   "scripts": {
-    "start": "node app  "
+    "start": "node ./bin/www "
   },
+  "author": "Quang Long",
+  "license": "ISC",
   "dependencies": {
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
