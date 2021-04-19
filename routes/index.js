@@ -9,7 +9,7 @@ mongoose.connect(dbconnet, {useNewUrlParser: true, useUnifiedTopology: true});
 var multer = require('multer');
 
 var upload = multer({
-   dest: '/uploads'
+   dest: '/public/uploads'
 })
 
 const db = mongoose.connection;
