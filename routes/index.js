@@ -1,16 +1,32 @@
 var express = require('express');
 var router = express.Router();
-
+var fs = require('fs');
 var dbconnet = 'mongodb+srv://admin:admin@cluster0.lvrs9.mongodb.net/Daty?retryWrites=true&w=majority';
 
 const mongoose = require('mongoose');
 mongoose.connect(dbconnet, {useNewUrlParser: true, useUnifiedTopology: true});
 
-var multer = require('multer');
+const multer = require('multer');
 
-var upload = multer({
-   dest: 'uploads/'
-})
+const storage = multer.diskStorage({
+    //destination for files
+    destination: function (request, file, callback) {
+        callback(null,'./public/uploads/images')
+    },
+
+    filename: function (request, file, callback) {
+        callback(null, Date.now() + file.originalname);
+    },
+});
+
+const upload = multer({
+    storage: storage,
+    limits: {
+        fieldSize: 1024 * 1024 * 3,
+    },
+});
+
+router.use(express.static('uploads/'));
 
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error: '));
@@ -26,16 +42,40 @@ var User = new mongoose.Schema({
     introduce: String,
     sex: String,
     interests: Array,
-    images:Array
+    images:String,
 })
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
     res.render('index');
+
+
+
+
+});
+router.get('/users', function (req, res, next) {
+    var userConnect = db.model('Daty', User);
+
+    userConnect.find({}, function (error, User) {
+        var type = 'index';
+        try {
+            type = req.query.type;
+        } catch (e) {
+        }
+        if (error) {
+            res.render('app', {title: 'Express : ' + error});
+            return
+        }
+        if (type == 'json') {
+            res.send(User)
+        } else {
+            res.render('app', {title: 'Express', Daty: User});
+        }
+
+    })
 });
 
-
-router.post('/users',upload.single('images'), function (req, res, next) {
+router.post('/users',upload.single('image'),async function (req, res, next) {
     var userConnect = db.model('Daty', User);
     userConnect({
         name: req.body.name,
@@ -45,31 +85,29 @@ router.post('/users',upload.single('images'), function (req, res, next) {
         introduce: req.body.introduce,
         sex: req.body.sex,
         interests: req.body.interests,
-        images: req.file.filename
-
-
+        images: req.file.filename,
 
     }).save(function (error) {
         if (error) {
-            res.render('./app.hbs')
+            res.render('app')
         } else {
-            res.render('./app.hbs');
-
+            res.render('app')
         }
     })
     var userConnectFind = db.model('Daty', User);
     userConnectFind.find().then(function (User) {
-        res.render('./app.hbs', {Daty: User})
+        res.render('app', {Daty: User})
     })
-
-
 });
+
 router.get('/getUsers', function (req, res, next) {
     var userConnectFind = db.model('Daty', User);
     userConnectFind.find().then(function (User) {
         res.render('./app.hbs', {Daty: User})
     })
 });
+
+
 router.get('/deleteUsers/:id',function (req,res) {
 
     db.model('Daty',User).deleteOne({ _id: req.params.id}, function (err) {
@@ -81,6 +119,7 @@ router.get('/deleteUsers/:id',function (req,res) {
 
     });
 })
+
 router.post('/update', function(req, res, next) {
     var id = req.body.id;
     var userConnect = db.model('Daty', User);
